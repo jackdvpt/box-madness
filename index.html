@@ -98,7 +98,6 @@
 
             for (let i = 0; i < 100; i++) {
                 let buttonNumber = getAUniqueRand() + 1
-                console.log(buttonNumber)
                 const iDiv = document.createElement('button');
                 iDiv.id = 'letter' + buttonNumber;
                 iDiv.textContent = buttonNumber;
@@ -107,7 +106,6 @@
                 });
                 solverSpace.appendChild(iDiv);
             }
-            console.log(placed)
         }
 
         const Timer = (() => {
