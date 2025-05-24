@@ -1,0 +1,158 @@
+<html>
+
+<head>
+    <title>Box Madness</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+        integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+    <style>
+        .CORRECT {
+            background-color: green !important
+        }
+
+        .grid-container {
+            height: 100vh;
+            padding: 24px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #asdButtons {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            overflow: hidden;
+        }
+
+
+        #asdButtons>button {
+            width: 100%;
+            height: 100%;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="grid-container">
+        <div style="text-align: center; display:none" id="timered">TIME TOOK</div>
+        <div id="asdButtons">
+
+        </div>
+
+    </div>
+    <script>
+
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * max);
+        }
+
+
+        var position = 0
+
+        function clicked(num) {
+
+            if (num == 1) {
+                Timer.start()
+            }
+            if (num == position + 1) {
+                position += 1
+                document.getElementById("letter" + num).classList.add("CORRECT")
+                if (num == 100) {
+                    Timer.stop()
+                }
+            }
+        }
+
+
+
+        var placed = []
+
+        function getAUniqueRand() {
+            var done = true
+            while (done) {
+                var curNum = getRandomInt(100)
+                if (!placed.includes(curNum)) {
+                    done = false;
+                    placed.push(curNum)
+                }
+            }
+            return curNum
+        }
+
+        function spawnButtons() {
+            const solverSpace = document.getElementById('asdButtons');
+            solverSpace.innerHTML = ''; // Clear old boxes if any
+
+            for (let i = 0; i < 100; i++) {
+                let buttonNumber = getAUniqueRand() + 1
+                console.log(buttonNumber)
+                const iDiv = document.createElement('button');
+                iDiv.id = 'letter' + buttonNumber;
+                iDiv.textContent = buttonNumber;
+                iDiv.addEventListener('click', function () {
+                    clicked(buttonNumber);
+                });
+                solverSpace.appendChild(iDiv);
+            }
+            console.log(placed)
+        }
+
+        const Timer = (() => {
+            let startTime = null;
+            let endTime = null;
+
+            const formatDuration = (ms) => {
+                const minutes = Math.floor(ms / 60000);
+                const seconds = Math.floor((ms % 60000) / 1000);
+                const milliseconds = Math.floor(ms % 1000);
+                return `${minutes}m ${seconds}s ${milliseconds}ms`;
+            };
+
+            return {
+                start: () => {
+                    startTime = performance.now();
+                    endTime = null;
+                },
+                stop: () => {
+                    if (startTime === null) {
+                        console.error("Timer was not started.");
+                        return null;
+                    }
+                    endTime = performance.now();
+                    const duration = endTime - startTime;
+                    const formatted = formatDuration(duration);
+
+                    var timered = document.getElementById("timered")
+                    timered.style.display="block"
+                    timered.textContent = `You took: ${formatted}`
+                    return formatted;
+                },
+                getDuration: () => {
+                    if (startTime !== null && endTime !== null) {
+                        return formatDuration(endTime - startTime);
+                    }
+                    console.warn("Start and/or stop time not set.");
+                    return null;
+                }
+            };
+        })();
+
+spawnButtons();
+    </script>
+
+</body>
+
+</html>
